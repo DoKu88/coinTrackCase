@@ -1,0 +1,12 @@
+DB Instance Identifier:
+database-2
+Master username:
+admin
+Master password
+12345678
+Database port: 3306
+endpoint: 
+database-2.cji0mokilyxv.us-west-1.rds.amazonaws.com
+
+ec2:
+ssh -i aws_ec2.pem ubuntu@ec2-13-52-80-55.us-west-1.compute.amazonaws.com

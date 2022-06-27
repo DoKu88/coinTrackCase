@@ -1,4 +1,4 @@
-from db_interface import DataBaseInterface 
+from db_interface import DataBaseInterface
 import time
 
 class UserInterface:
@@ -15,7 +15,7 @@ class UserInterface:
 
     def get_users(self):
         return self.database.get_users()
-    
+
     def get_all_addresses(self):
         return self.database.get_all_addresses()
 
@@ -29,23 +29,23 @@ class UserInterface:
         return self.database.get_addresses(user)
 
     def get_balance_addr(self, addr):
-        pass 
+        return self.database.get_balance_per_address(addr) 
 
     def get_balance_user(self, user):
-        pass 
+        pass
 
     def get_transactions_addr(self, addr):
         pass
 
     def get_transactions_user(self, user):
-        pass 
+        pass
 
     def show_table(self, tableName):
         self.database.show_table(tableName)
 
     # call update daemon manually
     def force_update(self):
-        pass 
+        pass
 
     def list_table_names(self):
         print("Table Names:")
@@ -73,7 +73,7 @@ def main():
     print('AddressBook after adding addr and users')
     UI.show_table("AddressBook")
     print('-------------------')
-    
+
     # Get all Bitcoin Addresses for Bobert
     addresses = UI.get_user_addrs(user1)
     print(user1 + "'s Addresses: ", addresses)
@@ -85,8 +85,7 @@ def main():
 
     print("Balances table")
     UI.show_table("Balances")
-    
+
 
 if __name__ == "__main__":
     main()
-

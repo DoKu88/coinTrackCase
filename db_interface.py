@@ -24,11 +24,11 @@ class DataBaseInterface:
 
         self.database_id = database_id
         if database_id is None:
-            database_id = 'database-2'
+            self.database_id = 'database-2'
 
         self.dataBaseName = dataBaseName
         if dataBaseName is None:
-            dataBaseName = 'CoinData'
+            self.dataBaseName = 'CoinData'
 
     # get datetime formatted for sql
     def get_datetime(self):
@@ -45,7 +45,7 @@ class DataBaseInterface:
                                  password=self.password)
 
         mycursor = connection.cursor()
-        use_database = "USE " + dataBaseName
+        use_database = "USE " + self.dataBaseName
         mycursor.execute(use_database)
 
         return mycursor, connection
@@ -68,7 +68,7 @@ class DataBaseInterface:
     # Columns: addr VARCHAR(34), user VARCHAR(34)
     def add_address(self, address, user1):
 
-        mycursor, connection = get_mysql_cursor()
+        mycursor, connection = self.get_mysql_cursor()
 
         add_address = 'INSERT INTO AddressBook (addr, user) VALUES ("' + address + '", "'+ user1 + '")'
         mycursor.execute(add_address)
@@ -87,7 +87,7 @@ class DataBaseInterface:
 
     # from the address book return all addresses, for a given user
     def get_addresses(self, user):
-        mycursor, connection = get_mysql_cursor()
+        mycursor, connection = self.get_mysql_cursor()
 
         get_addr_query = 'SELECT addr FROM AddressBook WHERE user="'+ user + '";'
         mycursor.execute(get_addr_query)
@@ -108,7 +108,7 @@ class DataBaseInterface:
     # DECIMAL
     def add_balance(self, address, balance_btc, balance_usd, datetime=None):
 
-        mycursor, connection = get_mysql_cursor()
+        mycursor, connection = self.get_mysql_cursor()
         if datetime is None:
             datetime = get_datetime()
 
@@ -171,7 +171,7 @@ class DataBaseInterface:
         if n is None:
             n = len(data_dict['transactions'])
 
-        mycursor, connection = get_mysql_cursor()
+        mycursor, connection = self.get_mysql_cursor()
         for i in range(n):
             self.add_transaction_wrapper(address, data_dict['transactions'][i], mycursor,
                     show=False)
@@ -189,7 +189,7 @@ class DataBaseInterface:
     # since address in AddressBook is foreign key for everyone and
     # deletes on cascade, only need to delete from AddressBook
     def del_address(self, address):
-        mycursor, connection = get_mysql_cursor()
+        mycursor, connection = self.get_mysql_cursor()
 
         del_addr_query = 'DELETE FROM AddressBook WHERE addr="'+ address + '";'
         mycursor.execute(del_addr_query)
@@ -199,8 +199,9 @@ class DataBaseInterface:
     # deletes on cascade, only need to delete from AddressBook
     # will delete all addresses associated with user
     def del_user(self, user):
-        mycursor, connection = get_mysql_cursor()
+        mycursor, connection = self.get_mysql_cursor()
 
         del_user_query = 'DELETE FROM AddressBook WHERE user="'+ user + '";'
         mycursor.execute(del_user_query)
         connection.commit()
+

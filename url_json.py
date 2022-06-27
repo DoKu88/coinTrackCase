@@ -207,6 +207,13 @@ def get_addresses(user):
 
     return addresses
 
+def del_address_addrBook(address):
+    mycursor, connection = get_mysql_cursor()
+    
+    del_addr_query = 'DELETE FROM AddressBook WHERE addr="'+ address + '";'
+    mycursor.execute(del_addr_query)
+    connection.commit()
+
 
 # =============================================================================
 # =============================================================================
@@ -224,7 +231,12 @@ def main():
     add_address_wrapper(address1, user1)   
     print("Address book contents:")
     show_table("AddressBook")
+
+    del_address_addrBook(address)
+    print("Address book contents (address deleted):", )
+    show_table("AddressBook")
     print('===============')
+
     data_dict, data_address = get_data_address(url_base, address)
 
     datetime = data_dict['transactions'][0]['time']

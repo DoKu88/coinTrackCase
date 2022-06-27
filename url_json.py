@@ -116,6 +116,23 @@ def add_address_wrapper(address, user1):
         print("Address: ", address)
         print("user: ", user1)
 
+# from the address book return all addresses, for a given user
+def get_addresses(user):
+    mycursor, connection = get_mysql_cursor()
+    
+    get_addr_query = 'SELECT addr FROM AddressBook WHERE user="'+ user + '";'
+    mycursor.execute(get_addr_query)
+    rows = mycursor.fetchall()
+
+    addresses = []
+    
+    for row in rows:
+        addresses.append(row[0])
+
+    print('addresses: ', addresses)
+
+    return addresses
+
 # adds address and user to address book
 # Table: Balances
 # Columns: addr VARCHAR(34), time TIMESTAMP, balance_usd DECIMAL, balance_btc
@@ -142,6 +159,11 @@ def add_balance_wrapper(address, balance_btc, balance_usd, datetime=None):
         print("balance_usd: ", balance_usd)
         print("datetime: ", datetime)
 
+def get_balance_per_address(address):
+    pass 
+
+def get_balance_per_user(user):
+    pass 
 
 # adds address and user to address book
 # Table: Transactions
@@ -189,29 +211,29 @@ def add_n_transactions(address, data_dict, n=None):
     connection.commit()
     mycursor.close()
 
+def get_trans_per_address(address):
+    pass 
 
-# from the address book return all addresses, for a given user
-def get_addresses(user):
-    mycursor, connection = get_mysql_cursor()
-    
-    get_addr_query = 'SELECT addr FROM AddressBook WHERE user="'+ user + '";'
-    mycursor.execute(get_addr_query)
-    rows = mycursor.fetchall()
+def get_trans_per_user(user):
+    pass 
 
-    addresses = []
-    
-    for row in rows:
-        addresses.append(row[0])
-
-    print('addresses: ', addresses)
-
-    return addresses
-
-def del_address_addrBook(address):
+# since address in AddressBook is foreign key for everyone and 
+# deletes on cascade, only need to delete from AddressBook
+def del_address(address):
     mycursor, connection = get_mysql_cursor()
     
     del_addr_query = 'DELETE FROM AddressBook WHERE addr="'+ address + '";'
     mycursor.execute(del_addr_query)
+    connection.commit()
+
+# since address in AddressBook is foreign key for everyone and 
+# deletes on cascade, only need to delete from AddressBook
+# will delete all addresses associated with user
+def del_user(user):
+    mycursor, connection = get_mysql_cursor()
+    
+    del_user_query = 'DELETE FROM AddressBook WHERE user="'+ user + '";'
+    mycursor.execute(del_user_query)
     connection.commit()
 
 
@@ -243,28 +265,13 @@ def main():
     addresses = get_addresses(user1)
     print("Bobert's Addresses: ", addresses)
 
-    del_address_addrBook(address)
+    del_user(user1)
     addresses = get_addresses(user1)
     print("Bobert's Addresses: After del", addresses)
 
     print("Balances table")
     show_table("Balances")
 
-    sys.exit(0)
-
-    import pdb; pdb.set_trace()
-    
-    url = url_base + address
-    
-    # store the response of URL
-    response = urlopen(url)
-    
-    # storing the JSON response
-    # from url in data
-    data_json = json.loads(response.read())
-    
-    # print the json response
-    print(data_json)
     
     
 if __name__ == "__main__":

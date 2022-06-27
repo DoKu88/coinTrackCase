@@ -26,8 +26,11 @@ def get_url_data(url1):
 
     return data_json
 
-def get_data_address(url_base, address):
-    url_access = url_base + address
+def get_data_address(url_base, address, num_trans=10000):
+    trans_deets = '?transaction_details=true'
+    num_trans = '&limit=' + str(num_trans)
+
+    url_access = url_base + address + trans_deets + num_trans
     data_json = get_url_data(url_access)
     data_address, data_context = data_json['data'][address], data_json['context']
 
@@ -39,7 +42,7 @@ def get_data_address(url_base, address):
     data_dict['balance_usd'] = balance_usd
     data_dict['transactions'],  data_dict['num_transactions'] = transactions
 
-    return data_dict
+    return data_dict, data_address
 
 # per address get the balance
 def get_balance(data_address):
@@ -48,7 +51,8 @@ def get_balance(data_address):
 
     return balance, balance_usd
 
-# per address get all (last 100) transactions
+# returns the complete n latest transactions 
+# already pre-specified
 def get_transactions(data_address):
     transactions = data_address['transactions']
     num_transactions = data_address['address']['transaction_count']
@@ -112,16 +116,35 @@ def add_balance(address, balance_btc, balance_usd, datetime=None):
 # Table: Transactions
 # Columns: addr VARCHAR(34), hash VARCHAR(64), time TIMESTAMP
 # DECIMAL
-def add_transaction(address, hash1, datetime=None):
+def add_transaction(address, transData, mycursor=None, show=True):
 
-    mycursor = get_mysql_cursor()
-    if datetime is None:
-        datetime = get_datetime()
+    if mycursor is None:
+        mycursor = get_mysql_cursor()
+    block_id = transData['block_id']
+    hash1    = transData['hash']
+    time     = transData['time']
+    balance_change = transData['balance_change']
 
-    add_transaction= 'INSERT INTO Transactions (addr, hash, time) VALUES ("'+ address + '", "'+ hash1 + '", "'+ datetime + '")'
+    add_transaction= 'INSERT INTO Transactions (addr, hash, time, balance_change, block_id) VALUES ("'+ address + '", "'+ hash1 + '", "'+ time + '", ' + str(balance_change) + ', ' + str(block_id) + ')'
     mycursor.execute(add_transaction)
 
+    if show:
+        show_table('Transactions', mycursor)
+
+
+# iterate through transactions 
+def add_n_transactions(address, data_dict, n=None):
+    tot_trans = data_dict['num_transactions'] 
+    if n is None:
+        n = len(data_dict['transactions'])
+
+    mycursor = get_mysql_cursor()
+    for i in range(n):
+        add_transaction(address, data_dict['transactions'][i], mycursor,
+                show=False)
+
     show_table('Transactions', mycursor)
+
 
 # from the address book return all addresses
 def get_addresses():
@@ -141,11 +164,12 @@ def main():
     address = '3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd'
     user1 = "Bobert"
     add_address(address, user1)   
-    data_dict = get_data_address(url_base, address)
+    data_dict, data_address = get_data_address(url_base, address)
 
-    datetime = get_datetime() 
+    datetime = data_dict['transactions'][0]['time']
     add_balance(address, data_dict['balance'], data_dict['balance_usd'], datetime)
-    add_transaction(address, data_dict['transactions'][-1], datetime)
+    add_n_transactions(address, data_dict, 10)
+    #add_transaction(address, data_dict['transactions'][-1])
 
     import pdb; pdb.set_trace()
     
@@ -162,8 +186,6 @@ def main():
     print(data_json)
     
     
-    print('ahoy')
-
-
 if __name__ == "__main__":
     main()
+

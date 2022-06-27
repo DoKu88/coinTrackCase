@@ -47,7 +47,7 @@ mycursor.execute(create_addressBook)
 create_balances = "CREATE TABLE Balances(addr VARCHAR(34), time TIMESTAMP, balance_usd DECIMAL, balance_btc DECIMAL, PRIMARY KEY(addr, time))"
 mycursor.execute(create_balances)
 
-create_transactions = "CREATE TABLE Transactions(addr VARCHAR(34), hash VARCHAR(64), time TIMESTAMP, PRIMARY KEY(addr, time))"
+create_transactions = "CREATE TABLE Transactions(addr VARCHAR(34), hash VARCHAR(64), time TIMESTAMP, balance_change DECIMAL, block_id INT, PRIMARY KEY(addr, hash))"
 mycursor.execute(create_transactions)
 
 

@@ -57,8 +57,9 @@ def get_balance(data_address):
 # per address get all transactions
 def get_transactions(data_address):
     transactions = data_address['transactions']
+    num_transactions = data_address['address']['transaction_count']
 
-    return transactions
+    return transactions, num_transactions
 
 # from the address book return all addresses
 def get_addresses():

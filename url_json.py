@@ -260,17 +260,23 @@ def main():
     datetime = data_dict['transactions'][0]['time']
     add_balance_wrapper(address, data_dict['balance'], data_dict['balance_usd'], datetime)
     add_n_transactions(address, data_dict, 10)
+
+    data_dict, data_address = get_data_address(url_base, address1)
+    add_balance_wrapper(address1, data_dict['balance'], data_dict['balance_usd'], datetime)
+    add_n_transactions(address1, data_dict, 2)
     #add_transaction(address, data_dict['transactions'][-1])
 
     addresses = get_addresses(user1)
     print("Bobert's Addresses: ", addresses)
 
+    '''
     del_user(user1)
     addresses = get_addresses(user1)
     print("Bobert's Addresses: After del", addresses)
 
     print("Balances table")
     show_table("Balances")
+    '''
 
     
     

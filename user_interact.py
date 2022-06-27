@@ -37,7 +37,11 @@ class UserInterface:
         return [balance_usd, balance_btc]
 
     def get_transactions_addr(self, addr):
-        pass
+        last_transaction = self.database.get_trans_per_address(addr)
+
+        print('last transaction: ', last_transaction)
+
+        return last_transaction
 
     def get_transactions_user(self, user):
         pass
@@ -91,6 +95,7 @@ def main():
 
     UI.get_balance_addr(address)
     UI.get_balance_user(user1)
+    UI.get_transactions_addr(address)
 
 
 if __name__ == "__main__":

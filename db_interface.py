@@ -268,8 +268,48 @@ class DataBaseInterface:
         connection.commit()
         mycursor.close()
 
+    # requirements state to grab the current transaction, interpret as the 
+    # last transaction that occurred
     def get_trans_per_address(self, address):
-        pass
+        mycursor, connection = self.get_mysql_cursor()
+
+        '''
+        SELECT T1.addr AS addr, T1.hash AS hash, T1.time AS time, T1.balance_change AS balance_change, T1.block_id AS block_id 
+        FROM Transactions AS T1
+        INNER JOIN
+        (SELECT DISTINCT addr, MAX(time) as maxTime
+            FROM Transactions
+            GROUP BY addr) AS T2
+        ON T1.addr = T2.addr AND T1.time = T2.maxTime
+        WHERE T1.addr = "address"
+
+        '''
+
+        print('address: ', address)
+
+        get_transaction = 'SELECT T1.addr AS addr, T1.hash AS hash, T1.time AS time, T1.balance_change AS balance_change, T1.block_id AS block_id '
+        get_transaction = get_transaction + 'FROM Transactions AS T1 '
+        get_transaction = get_transaction + 'INNER JOIN '
+        get_transaction = get_transaction + '(SELECT DISTINCT addr, MAX(time) as maxTime '
+        get_transaction = get_transaction + 'FROM Transactions'
+        get_transaction = get_transaction + 'GROUP BY addr) AS T2 '
+        get_transaction = get_transaction + 'ON T1.addr = T2.addr AND T1.time = T2.maxTime '
+        get_transaction = get_transaction + 'WHERE T1.addr = "' + address + '";'
+
+        
+        get_balance = 'SELECT balance_btc '
+        get_balance = get_balance + 'FROM Balances AS B1 '
+        get_balance = get_balance + 'INNER JOIN '
+        get_balance = get_balance + '(SELECT DISTINCT addr, MAX(time) as maxTime '
+        get_balance = get_balance + 'FROM Balances '
+        get_balance = get_balance + 'GROUP BY addr) AS B2 '
+        get_balance = get_balance + 'ON B1.addr = B2.addr AND B1.time = B2.maxTime '
+        get_balance = get_balance + 'WHERE B1.addr = "' + address + '";'
+
+        mycursor.execute(get_transaction)
+        last_transaction = mycursor.fetchone()
+        
+        return last_transaction
 
     def get_trans_per_user(self, user):
         pass

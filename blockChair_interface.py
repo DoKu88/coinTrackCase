@@ -63,3 +63,19 @@ class BlockChairInterface:
         num_transactions = data_address['address']['transaction_count']
 
         return transactions, num_transactions
+
+    # get only the number of transactions
+    # want a cheaper call than the full one
+    def get_num_transactions(self, address):
+        # get 1 transaction to avoid too much data
+        # limited info
+        num_trans = '?limit=' + str(1)
+        url_access = self.url_base + address + num_trans
+        data_json = self.get_url_data(url_access)
+        data_address, data_context = data_json['data'][address], data_json['context']
+        transactions, num_transactions = self.get_transactions(data_address)
+
+        return num_transactions
+
+
+

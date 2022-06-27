@@ -102,6 +102,40 @@ class DataBaseInterface:
 
         return addresses
 
+    # from the address book return all users
+    def get_all_addresses(self):
+        mycursor, connection = self.get_mysql_cursor()
+
+        get_addr_query = 'SELECT addr FROM AddressBook;' 
+        mycursor.execute(get_addr_query)
+        rows = mycursor.fetchall()
+
+        addresses = []
+
+        for row in rows:
+            addresses.append(row[0])
+
+        print('addresses: ', addresses)
+
+        return addresses 
+
+    # from the address book return all users
+    def get_users(self):
+        mycursor, connection = self.get_mysql_cursor()
+
+        get_user_query = 'SELECT DISTINCT(user) FROM AddressBook;' 
+        mycursor.execute(get_user_query)
+        rows = mycursor.fetchall()
+
+        users = []
+
+        for row in rows:
+            users.append(row[0])
+
+        print('users: ', users)
+
+        return users
+
     # adds address and user to address book
     # Table: Balances
     # Columns: addr VARCHAR(34), time TIMESTAMP, balance_usd DECIMAL, balance_btc

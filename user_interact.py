@@ -4,35 +4,19 @@ import time
 
 class DataBaseUpdater:
     def __init__(self, sleepTime=5):
-
-        # key address, value number of transactions
         self.last_numTrans = dict()
-        # key address, value difference between # of current and last trans
         self.last_diff = dict()
-        
         self.sleepTime = sleepTime
         # make objects so that we can interact with the web API and 
         # our database
         self.database = DataBaseInterface()
         self.webAPI   = BlockChairInterface()
 
-        # intialize number of transactions per address
-        self.init_last_numTrans()
-
-    # get all addresses in the database and their number of transactions
-    def init_last_numTrans(self):
-
-        addresses = self.database.get_all_addresses()
-
-        for addr in addresses:
-            self.last_numTrans[addr] = self.webAPI.get_num_transactions(addr)
-
     # determine which addresses need to be updated
     # run until one needs to be updated since daemon
     def need_update(self):
         address_update = []
         go = True
-        print('Pinging for updates...')
         while go:
             time.sleep(self.sleepTime)
             for address in self.last_numTrans:
@@ -45,8 +29,6 @@ class DataBaseUpdater:
                     self.last_numTrans[address] = num_trans
                     go = False
                     address_update.append(address)
-
-        print('New transaction! Update...')
                     
         return address_update
     
@@ -66,11 +48,19 @@ class DataBaseUpdater:
         # update the tranaction data base with the last num_update entries
         self.database.add_n_transactions(address, data_dict, num_update)
 
-        print('Update complete')
+    # basically also add_user
+    def add_address(self, addr, user):
+        self.database.add_address_wrapper(addr, user)
+
+    def del_address(self, addr):
+        self.database.del_address(addr)
+
+    def del_user(self, user):
+        self.database.del_user(user)
+
 
 
 def main():
-
     updater = DataBaseUpdater() 
 
     # run this like a Daemon where basically we're always looking to update
@@ -80,6 +70,40 @@ def main():
     
         for addr in addresses:
             updater.update_database(addr)
+
+    database.show_table("AddressBook")
+
+    # add BitCoin Addresses Per User to DataBase
+    address = '3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd'
+    address1 = 'bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5'
+    user1 = "Bobert"
+    database.add_address_wrapper(address, user1)
+    database.add_address_wrapper(address1, user1)
+    print("Address book contents:")
+    database.show_table("AddressBook")
+    
+    # get data for address from webAPI
+    data_dict, data_address = webAPI.get_data_address(address)
+
+    # update database with balances and transactions for each address
+    datetime = data_dict['transactions'][0]['time']
+    database.add_balance_wrapper(address, data_dict['balance'], 
+                                    data_dict['balance_usd'], datetime)
+    database.add_n_transactions(address, data_dict, 10)
+    #database.add_transaction(address, data_dict['transactions'][-1])
+
+    # Get all Bitcoin Addresses for Bobert
+    addresses = database.get_addresses(user1)
+    print("Bobert's Addresses: ", addresses)
+
+    # Delete Bobert from DataBase and see what happens
+    database.del_user(user1)
+    addresses = database.get_addresses(user1)
+    print("Bobert's Addresses: After del", addresses)
+
+    print("Balances table")
+    database.show_table("Balances")
+
 
 
 if __name__ == "__main__":

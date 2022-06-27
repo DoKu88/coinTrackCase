@@ -232,10 +232,6 @@ def main():
     print("Address book contents:")
     show_table("AddressBook")
 
-    del_address_addrBook(address)
-    print("Address book contents (address deleted):", )
-    show_table("AddressBook")
-    print('===============')
 
     data_dict, data_address = get_data_address(url_base, address)
 
@@ -246,6 +242,13 @@ def main():
 
     addresses = get_addresses(user1)
     print("Bobert's Addresses: ", addresses)
+
+    del_address_addrBook(address)
+    addresses = get_addresses(user1)
+    print("Bobert's Addresses: After del", addresses)
+
+    print("Balances table")
+    show_table("Balances")
 
     sys.exit(0)
 

@@ -74,8 +74,8 @@ class DataBaseInterface:
         mycursor.execute(add_address)
         connection.commit()
 
-        #show_table('AddressBook', mycursor)
-        show_table('AddressBook')
+        #self.show_table('AddressBook', mycursor)
+        #self.show_table('AddressBook')
 
     def add_address_wrapper(self, address, user1):
         try:
@@ -150,7 +150,7 @@ class DataBaseInterface:
         mycursor.execute(add_balance)
         connection.commit()
 
-        show_table('Balances')
+        #self.show_table('Balances')
 
     def add_balance_wrapper(self, address, balance_btc, balance_usd, datetime=None):
         try:
@@ -210,7 +210,7 @@ class DataBaseInterface:
             self.add_transaction_wrapper(address, data_dict['transactions'][i], mycursor,
                     show=False)
 
-        #show_table('Transactions', mycursor)
+        #self.show_table('Transactions', mycursor)
         connection.commit()
         mycursor.close()
 

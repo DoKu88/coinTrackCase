@@ -41,13 +41,13 @@ mycursor.execute(use_database)
 
 # create addressBook table in database 
 # bit coin addresses are 34 characters
-create_addressBook = "CREATE TABLE AddressBook (addr CHAR(34), user VARCHAR(34), PRIMARY KEY(addr))"
+create_addressBook = "CREATE TABLE AddressBook (addr VARCHAR(34), user VARCHAR(34), PRIMARY KEY(addr))"
 mycursor.execute(create_addressBook)
 
-create_balances = "CREATE TABLE Balances(addr CHAR(34), time TIMESTAMP, balance_usd NUMERIC(9,2), balance_btc DECIMAL, PRIMARY KEY(addr, time))"
+create_balances = "CREATE TABLE Balances(addr VARCHAR(34), time TIMESTAMP, balance_usd DECIMAL, balance_btc DECIMAL, PRIMARY KEY(addr, time))"
 mycursor.execute(create_balances)
 
-create_transactions = "CREATE TABLE Transactions(addr CHAR(34), hash CHAR(64), time TIMESTAMP, PRIMARY KEY(addr, time))"
+create_transactions = "CREATE TABLE Transactions(addr VARCHAR(34), hash VARCHAR(64), time TIMESTAMP, PRIMARY KEY(addr, time))"
 mycursor.execute(create_transactions)
 
 

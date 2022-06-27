@@ -43,8 +43,16 @@ class UserInterface:
 
         return last_transaction
 
+    # get a transaction for every bitcoin address the user has 
     def get_transactions_user(self, user):
-        pass
+        last_transactions = self.database.get_trans_per_user(user)
+
+        print('last transactions for user: ', user)
+        for trans in last_transactions:
+            print('transaction: ')
+            print(trans)
+
+        return last_transactions
 
     def show_table(self, tableName):
         self.database.show_table(tableName)
@@ -96,6 +104,7 @@ def main():
     UI.get_balance_addr(address)
     UI.get_balance_user(user1)
     UI.get_transactions_addr(address)
+    UI.get_transactions_user(user1)
 
 
 if __name__ == "__main__":

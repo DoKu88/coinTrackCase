@@ -5,18 +5,10 @@ import pymysql
 from datetime import datetime
 import sys
 
-host = 'database-2.cji0mokilyxv.us-west-1.rds.amazonaws.com'
-user = 'admin'
-password = '12345678'
-database_id = 'database-2'
-dataBaseName = 'CoinData'
 
-# get datetime formatted for sql 
-def get_datetime():
-    now = datetime.now()
-    formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
-    
-    return formatted_date
+# =============================================================================
+# API URL INTERACTIONS 
+# =============================================================================
 
 def get_url_data(url1):
     # store the response of URL
@@ -60,6 +52,23 @@ def get_transactions(data_address):
 
     return transactions, num_transactions
 
+# =============================================================================
+# DATA BASE INTERACTIONS
+# =============================================================================
+
+host = 'database-2.cji0mokilyxv.us-west-1.rds.amazonaws.com'
+user = 'admin'
+password = '12345678'
+database_id = 'database-2'
+dataBaseName = 'CoinData'
+
+# get datetime formatted for sql 
+def get_datetime():
+    now = datetime.now()
+    formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+    
+    return formatted_date
+
 # standardize connecting to the mysql host 
 def get_mysql_cursor():
     connection = pymysql.connect(host=host,
@@ -85,7 +94,6 @@ def show_table(tableName, mycursor=None):
     for row in rows:
         print(row)
 
-
 # adds address and user to address book
 # Table: AddressBook
 # Columns: addr VARCHAR(34), user VARCHAR(34)
@@ -99,7 +107,15 @@ def add_address(address, user1):
 
     #show_table('AddressBook', mycursor)
     show_table('AddressBook')
-    
+
+def add_address_wrapper(address, user1):
+    try:
+        add_address(address, user1)
+    except:
+        print("AddressBook couldn't be added to")
+        print("Address: ", address)
+        print("user: ", user1)
+
 # adds address and user to address book
 # Table: Balances
 # Columns: addr VARCHAR(34), time TIMESTAMP, balance_usd DECIMAL, balance_btc
@@ -115,6 +131,17 @@ def add_balance(address, balance_btc, balance_usd, datetime=None):
     connection.commit()
 
     show_table('Balances')
+
+def add_balance_wrapper(address, balance_btc, balance_usd, datetime=None):
+    try:
+        add_balance(address, balance_btc, balance_usd, datetime)
+    except:
+        print("Balances couldn't be added to")
+        print("Address: ", address)
+        print("balance_btc: ", balance_btc)
+        print("balance_usd: ", balance_usd)
+        print("datetime: ", datetime)
+
 
 # adds address and user to address book
 # Table: Transactions
@@ -139,6 +166,13 @@ def add_transaction(address, transData, mycursor=None, show=True):
     if show:
         show_table('Transactions', mycursor)
 
+def add_transaction_wrapper(address, transData, mycursor=None, show=True):
+    try:
+        add_transaction(address, transData, mycursor=None, show=True)
+    except:
+        print("Transactions couldn't be added to")
+        print("Address: ", address)
+        print("transData: ", transData)
 
 # iterate through transactions 
 def add_n_transactions(address, data_dict, n=None):
@@ -148,7 +182,7 @@ def add_n_transactions(address, data_dict, n=None):
 
     mycursor, connection = get_mysql_cursor()
     for i in range(n):
-        add_transaction(address, data_dict['transactions'][i], mycursor,
+        add_transaction_wrapper(address, data_dict['transactions'][i], mycursor,
                 show=False)
 
     #show_table('Transactions', mycursor)
@@ -156,7 +190,7 @@ def add_n_transactions(address, data_dict, n=None):
     mycursor.close()
 
 
-# from the address book return all addresses
+# from the address book return all addresses, for a given user
 def get_addresses(user):
     mycursor, connection = get_mysql_cursor()
     
@@ -164,20 +198,18 @@ def get_addresses(user):
     mycursor.execute(get_addr_query)
     rows = mycursor.fetchall()
 
-    import pdb; pdb.set_trace()
-
+    addresses = []
+    
     for row in rows:
-        print('address ', row)
+        addresses.append(row[0])
 
-    mycursor.close()
+    print('addresses: ', addresses)
 
-    return "happy tree friends" 
+    return addresses
 
 
-# from the address book, get the next address
-def get_next_address(iterator1):
-    pass
-
+# =============================================================================
+# =============================================================================
 
 def main():
     print('Hello world')
@@ -186,15 +218,17 @@ def main():
     # parameter for urlopen
     url_base = 'https://api.blockchair.com/bitcoin/dashboards/address/'
     address = '3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd'
+    address1 = 'bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5'
     user1 = "Bobert"
-    add_address(address, user1)   
+    add_address_wrapper(address, user1)   
+    add_address_wrapper(address1, user1)   
     print("Address book contents:")
     show_table("AddressBook")
     print('===============')
     data_dict, data_address = get_data_address(url_base, address)
 
     datetime = data_dict['transactions'][0]['time']
-    add_balance(address, data_dict['balance'], data_dict['balance_usd'], datetime)
+    add_balance_wrapper(address, data_dict['balance'], data_dict['balance_usd'], datetime)
     add_n_transactions(address, data_dict, 10)
     #add_transaction(address, data_dict['transactions'][-1])
 

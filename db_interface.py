@@ -99,7 +99,7 @@ class DataBaseInterface:
         for row in rows:
             addresses.append(row[0])
 
-        print('addresses: ', addresses)
+        #print('addresses: ', addresses)
 
         return addresses
 
@@ -116,7 +116,7 @@ class DataBaseInterface:
         for row in rows:
             addresses.append(row[0])
 
-        print('addresses: ', addresses)
+        #print('addresses: ', addresses)
 
         return addresses
 
@@ -133,7 +133,7 @@ class DataBaseInterface:
         for row in rows:
             users.append(row[0])
 
-        print('users: ', users)
+        #print('users: ', users)
 
         return users
 
@@ -177,26 +177,50 @@ class DataBaseInterface:
 
         '''
 
-        get_balance = 'SELECT balance_usd'
-        get_balance = get_balance + 'FROM Balances AS B1'
-        get_balance = get_balance + 'INNER JOIN'
-        get_balance = get_balance + '(SELECT DISTINCT addr, MAX(time) as maxTime'
-        get_balance = get_balance + 'FROM Balances'
-        get_balance = get_balance + 'GROUP BY addr) AS B2'
-        get_balance = get_balance + 'ON B1.addr = B2.addr AND B1.time = B2.maxTime'
+        get_balance = 'SELECT balance_usd '
+        get_balance = get_balance + 'FROM Balances AS B1 '
+        get_balance = get_balance + 'INNER JOIN '
+        get_balance = get_balance + '(SELECT DISTINCT addr, MAX(time) as maxTime '
+        get_balance = get_balance + 'FROM Balances '
+        get_balance = get_balance + 'GROUP BY addr) AS B2 '
+        get_balance = get_balance + 'ON B1.addr = B2.addr AND B1.time = B2.maxTime '
         get_balance = get_balance + 'WHERE B1.addr = "' + address + '";'
 
         mycursor.execute(get_balance)
         balance_usd = mycursor.fetchone()
 
-        print('balance_usd')
+        #print('balance_usd: ', balance_usd)
+        balance_usd = float(balance_usd[0])
 
-        import pdb; pdb.set_trace()
+        get_balance = 'SELECT balance_btc '
+        get_balance = get_balance + 'FROM Balances AS B1 '
+        get_balance = get_balance + 'INNER JOIN '
+        get_balance = get_balance + '(SELECT DISTINCT addr, MAX(time) as maxTime '
+        get_balance = get_balance + 'FROM Balances '
+        get_balance = get_balance + 'GROUP BY addr) AS B2 '
+        get_balance = get_balance + 'ON B1.addr = B2.addr AND B1.time = B2.maxTime '
+        get_balance = get_balance + 'WHERE B1.addr = "' + address + '";'
 
-        return balance_usd
+        mycursor.execute(get_balance)
+        balance_btc = mycursor.fetchone()
+        
+        #print('balance_btc: ', balance_btc)
+        balance_btc = float(balance_btc[0])
 
+        return balance_usd, balance_btc
+
+    
     def get_balance_per_user(self, user):
-        pass
+        
+        addresses = self.get_addresses(user)
+
+        balance_usd, balance_btc = 0,0
+        for addr in addresses:
+            bal_usd, bal_btc = self.get_balance_per_address(addr)
+            balance_usd += bal_usd
+            balance_btc += bal_btc
+            
+        return balance_usd, balance_btc
 
     # adds address and user to address book
     # Table: Transactions
@@ -223,7 +247,7 @@ class DataBaseInterface:
 
     def add_transaction_wrapper(self, address, transData, mycursor=None, show=True):
         try:
-            self.add_transaction(address, transData, mycursor=None, show=True)
+            self.add_transaction(address, transData, mycursor=None, show=show)
         except:
             print("Transactions couldn't be added to")
             print("Address: ", address)

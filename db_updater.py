@@ -18,6 +18,11 @@ class DataBaseUpdater:
 
         # intialize number of transactions per address
         self.init_last_numTrans()
+        # update database 1x through
+        addresses = self.database.get_all_addresses()
+        for addr in addresses:
+            self.update_database(addr)
+        print('Update complete')
 
     # get all addresses in the database and their number of transactions
     def init_last_numTrans(self):
@@ -26,6 +31,7 @@ class DataBaseUpdater:
 
         for addr in addresses:
             self.last_numTrans[addr] = self.webAPI.get_num_transactions(addr)
+            self.last_diff[addr] = self.last_numTrans[addr] 
 
     # determine which addresses need to be updated
     # run until one needs to be updated since daemon
@@ -51,13 +57,16 @@ class DataBaseUpdater:
         return address_update
     
     # for an address update the database 
-    def update_database(self, addr):
+    def update_database(self, address):
         # get data for address from webAPI
-        num_update = self.last_diff[addr]
+        num_update = self.last_diff[address]
         data_dict, data_address = self.webAPI.get_data_address(address,
                                                     num_trans=num_update)
 
         # update Balance and Transaction Databases
+        if num_update == 0:
+            return 
+
         datetime = data_dict['transactions'][0]['time']
         self.database.add_balance_wrapper(address, data_dict['balance'], 
                                         data_dict['balance_usd'], datetime)
@@ -66,7 +75,6 @@ class DataBaseUpdater:
         # update the tranaction data base with the last num_update entries
         self.database.add_n_transactions(address, data_dict, num_update)
 
-        print('Update complete')
 
 
 def main():
@@ -80,6 +88,7 @@ def main():
     
         for addr in addresses:
             updater.update_database(addr)
+        print('Update complete')
 
 
 if __name__ == "__main__":

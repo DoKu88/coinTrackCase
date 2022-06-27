@@ -29,10 +29,12 @@ class UserInterface:
         return self.database.get_addresses(user)
 
     def get_balance_addr(self, addr):
-        return self.database.get_balance_per_address(addr) 
+        balance_usd, balance_btc = self.database.get_balance_per_address(addr) 
+        return [balance_usd, balance_btc]
 
     def get_balance_user(self, user):
-        pass
+        balance_usd, balance_btc = self.database.get_balance_per_user(user)
+        return [balance_usd, balance_btc]
 
     def get_transactions_addr(self, addr):
         pass
@@ -66,6 +68,7 @@ def main():
 
     address = '3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd'
     address1 = 'bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5'
+              #'bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5'
     user1 = "Bobert"
 
     UI.add_user(address, user1)
@@ -79,12 +82,15 @@ def main():
     print(user1 + "'s Addresses: ", addresses)
 
     # Delete Bobert from DataBase and see what happens
-    UI.del_user(user1)
-    addresses = UI.get_user_addrs(user1)
-    print("Bobert's Addresses: After del", addresses)
+    #UI.del_user(user1)
+    #addresses = UI.get_user_addrs(user1)
+    #print("Bobert's Addresses: After del", addresses)
 
     print("Balances table")
     UI.show_table("Balances")
+
+    UI.get_balance_addr(address)
+    UI.get_balance_user(user1)
 
 
 if __name__ == "__main__":

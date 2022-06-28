@@ -6,6 +6,9 @@
   <i>System Architecture.</i>
 </p>
 
+For specific details and overview about system look at:
+https://www.notion.so/Marcus-Dominguez-Kuhne-b064291cc1fa43fd96ab10d0db0952c8
+
 NOTE: The database for this system runs on an AWS RBS mySQL instance, which we access through an AWS EC2 Ubuntu instance. Keep pem key local in this repository for access.  We can access the AWS RBS mySQL instance from anywhere, but it's just easiest through AWS EC2.
 
 To log into this instance:
@@ -19,4 +22,4 @@ python setup_mysql_server.py
 3. Start Database Updater to run continuously in own window:
 python db_updater.py
 4. Start user interact, note that main function runs demo for us, but we can change to be more user interactive:
-python user_interact.py 
+python user_interact.py

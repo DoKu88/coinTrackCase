@@ -9,7 +9,7 @@
 For specific details and overview about system look at: <br>
 https://www.notion.so/Marcus-Dominguez-Kuhne-b064291cc1fa43fd96ab10d0db0952c8
 
-NOTE: The database for this system runs on an AWS RBS mySQL instance, which we access through an AWS EC2 Ubuntu instance. Keep pem key local in this repository for access.  We can access the AWS RBS mySQL instance from anywhere, but it's just easiest through AWS EC2.
+NOTE: The database for this system runs on an AWS RBS mySQL instance, which we access through an AWS EC2 Ubuntu instance. Keep pem key local in this repository for access.  We can access the AWS RBS mySQL instance from anywhere, but it's just easiest through AWS EC2 due to Amazon group permissions.
 
 To log into this instance:
 1. cd AWS_DB_Logistics

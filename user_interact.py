@@ -192,6 +192,8 @@ def main():
 
     UI.add_address(address2, user2)
 
+    import pdb; pdb.set_trace()
+
     print('AddressBook after adding addr and users')
     UI.show_table("AddressBook")
     print('-------------------')

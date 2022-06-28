@@ -14,6 +14,7 @@ NOTE: The database for this system runs on an AWS RBS mySQL instance, which we a
 To log into this instance:
 1. cd AWS_DB_Logistics
 2. ssh -i aws_ec2.pem ubuntu@ec2-13-52-80-55.us-west-1.compute.amazonaws.com
+Note: May need to run for key permissions: chmod 600 aws_ec2.pem
 
 To start and run the database (after logging in):
 1. conda activate coin

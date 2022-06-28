@@ -1,4 +1,5 @@
 from db_interface import DataBaseInterface
+from db_updater import DataBaseUpdater
 import time
 from datetime import datetime
 
@@ -27,11 +28,13 @@ class DateEncap:
 class UserInterface:
     def __init__(self):
         self.database = DataBaseInterface()
+        self.updater  = DataBaseUpdater()
         self.tableNames = ["AddressBook", "Balances", "Transactions"]
 
     # basically also add_user
     def add_address(self, addr, user):
         self.database.add_address_wrapper(addr, user)
+        self.updater.update_database(addr)
 
     def add_user(self, addr, user):
         self.add_address(addr, user)

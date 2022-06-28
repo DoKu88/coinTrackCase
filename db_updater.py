@@ -71,9 +71,14 @@ class DataBaseUpdater:
     # for an address update the database 
     def update_database(self, address):
         # get data for address from webAPI
-        num_update = self.last_diff[address]
-        data_dict, data_address = self.webAPI.get_data_address(address,
+        if address in self.last_diff:
+            num_update = self.last_diff[address]
+            data_dict, data_address = self.webAPI.get_data_address(address,
                                                     num_trans=num_update)
+        else:
+            data_dict, data_address = self.webAPI.get_data_address(address)
+            num_update = len(data_dict['transactions'])
+
 
         # update Balance and Transaction Databases
         if num_update == 0:
@@ -91,7 +96,7 @@ class DataBaseUpdater:
 
 def main():
 
-    updater = DataBaseUpdater(0.1) 
+    updater = DataBaseUpdater(5) 
 
     # run this like a Daemon where basically we're always looking to update
     # the database by seeing if any new info came in

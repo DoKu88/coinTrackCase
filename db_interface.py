@@ -70,7 +70,7 @@ class DataBaseInterface:
     # adds address and user to address book
     # Table: AddressBook
     # Columns: addr VARCHAR(34), user VARCHAR(34)
-    def add_address(self, address, user1):
+    def add_address(self, address, user1, show=False):
 
         mycursor, connection = self.get_mysql_cursor()
 
@@ -82,9 +82,12 @@ class DataBaseInterface:
         try:
             self.add_address(address, user1)
         except:
-            print("AddressBook couldn't be added to")
-            print("Address: ", address)
-            print("user: ", user1)
+            if show:
+                print("AddressBook couldn't be added to")
+                print("Address: ", address)
+                print("user: ", user1)
+            else:
+                pass
 
     # from the address book return all addresses, for a given user
     def get_addresses(self, user):

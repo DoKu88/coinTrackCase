@@ -22,6 +22,8 @@ class DataBaseUpdater:
         addresses = self.database.get_all_addresses()
         for addr in addresses:
             self.update_database(addr)
+
+        self.numAddr = len(addresses)
         print('Update complete')
 
     # get all addresses in the database and their number of transactions
@@ -41,8 +43,18 @@ class DataBaseUpdater:
         print('Pinging for updates...')
         while go:
             time.sleep(self.sleepTime)
-            for address in self.last_numTrans:
+            addresses = self.database.get_all_addresses()
+            for address in addresses:
+            #for address in self.last_numTrans:
 
+                # if new address, need to update it and table
+                if address not in self.last_numTrans:
+                    go = False 
+                    address_update.append(address)
+                    self.last_numTrans[address] = self.webAPI.get_num_transactions(address)
+                    self.last_diff[address] = self.last_numTrans[address] 
+                    continue
+    
                 # see if there has been more transactions 
                 # if so return since we need to update said address
                 num_trans = self.webAPI.get_num_transactions(address)
@@ -79,7 +91,7 @@ class DataBaseUpdater:
 
 def main():
 
-    updater = DataBaseUpdater() 
+    updater = DataBaseUpdater(0.1) 
 
     # run this like a Daemon where basically we're always looking to update
     # the database by seeing if any new info came in

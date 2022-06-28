@@ -18,7 +18,8 @@ To log into this instance:
 
 To start and run the database (after logging in):
 1. conda activate coin
-2. Initialize database and empty tables: <br>
+2. cd Projects/coinTrackCase
+3. Initialize database and empty tables: <br>
 python setup_mysql_server.py
 3. Start Database Updater to run continuously in own window: <br>
 python db_updater.py

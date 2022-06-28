@@ -1,5 +1,28 @@
 from db_interface import DataBaseInterface
 import time
+from datetime import datetime
+
+class DateEncap:
+    def __init__(self, year, month, day, hour=0, minute=0, second=0):
+        self.dateDict = dict()
+
+        self.dateDict['year']   = year
+        self.dateDict['month']  = month
+        self.dateDict['day']    = day
+        self.dateDict['hour']   = hour
+        self.dateDict['minute'] = minute
+        self.dateDict['second'] = second
+
+    def get_data(self):
+        return self.dateDict
+
+    def get_formatted_date(self):
+
+        dateStr = datetime(self.dateDict['year'], self.dateDict['month'],
+                 self.dateDict['day'], self.dateDict['hour'], self.dateDict['minute'],
+                 self.dateDict['second']).strftime('%Y-%m-%d %H:%M:%S')
+
+        return dateStr
 
 class UserInterface:
     def __init__(self):
@@ -54,12 +77,42 @@ class UserInterface:
 
         return last_transactions
 
+    # get all transactions for a bitcoin address within certain dates
+    def get_transactions_addr_range(self, addr, startDate, endDate):
+
+        startDate1 = startDate.get_formatted_date()
+        endDate1   = endDate.get_formatted_date()
+
+        transactions = self.database.get_trans_per_address_dateRange(addr,
+                startDate1, endDate1)
+
+        print('transactions for address: ', addr, ' in range', startDate1, ' ',
+                endDate1)
+
+        for trans in transactions:
+            print('transaction: ')
+            print(trans)
+
+        return transactions
+
+    def get_transactions_user_range(self, user, startDate, endDate):
+        startDate1 = startDate.get_formatted_date()
+        endDate1   = endDate.get_formatted_date()
+
+        transactions = self.database.get_trans_per_user_dateRange(user,
+                startDate1, endDate1)
+
+        print('transactions for user: ', user, ' in range', startDate1, ' ',
+                endDate1)
+
+        for trans in transactions:
+            print('transaction: ')
+            print(trans)
+
+        return transactions
+
     def show_table(self, tableName):
         self.database.show_table(tableName)
-
-    # call update daemon manually
-    def force_update(self):
-        pass
 
     def list_table_names(self):
         print("Table Names:")
@@ -106,6 +159,15 @@ def main():
     UI.get_transactions_addr(address)
     UI.get_transactions_user(user1)
 
+
+    #endDate = DateEncap(2022, 6, 27)
+    #startDate = DateEncap(2022, 6, 20)
+
+    endDate = DateEncap(2021, 10, 28)
+    startDate = DateEncap(2021, 10, 20)
+
+    UI.get_transactions_addr_range(address, startDate, endDate)
+    UI.get_transactions_user_range(user1, startDate, endDate)
 
 if __name__ == "__main__":
     main()

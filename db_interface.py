@@ -305,6 +305,49 @@ class DataBaseInterface:
         
         return transData
 
+    # requirements state to grab the current transaction, interpret as the 
+    # last transaction that occurred
+    def get_trans_per_address_dateRange(self, address, startDate, endDate):
+        mycursor, connection = self.get_mysql_cursor()
+
+        '''
+        SELECT addr, hash, time, balance_change, block_id
+        FROM Transactions 
+        WHERE T1.addr = "address" AND time BETWEEN startDate AND endDate
+        '''
+
+        #startDate1 = datetime(startDate['year'], startDate['month'],
+        #        startDate['day'], startDate['hour'], startDate['minute'],
+        #        startDate['second']).strftime('%Y-%m-%d %H:%M:%S')
+
+        #endDate1 = datetime(endDate['year'], endDate['month'],
+        #        endDate['day'], endDate['hour'], endDate['minute'],
+        #        endDate['second']).strftime('%Y-%m-%d %H:%M:%S')
+
+
+        get_transaction = "SELECT addr, hash, time, balance_change, block_id "
+        get_transaction = get_transaction + "FROM Transactions "
+        get_transaction = get_transaction + 'WHERE addr = "' + address + '" '
+        get_transaction = get_transaction + 'AND time BETWEEN "' + startDate + '" AND "' + endDate + '";'
+        
+        mycursor.execute(get_transaction)
+        trans_res = mycursor.fetchall()
+
+        transactions = []
+    
+        for trans in trans_res:
+            #print(trans)
+
+            transData = dict()
+            transData['address'] = trans[0]
+            transData['hash'] = trans[1]
+            transData['time'] = trans[2]
+            transData['balance_change'] = float(trans[3])
+            transData['block_id'] = trans[4]
+            transactions.append(transData)
+        
+        return transactions
+
     # get each of the last transactions per Bitcoin Address
     def get_trans_per_user(self, user):
         addresses = self.get_addresses(user)
@@ -313,6 +356,17 @@ class DataBaseInterface:
         for addr in addresses:
             trans = self.get_trans_per_address(addr)
             last_trans.append(trans)
+            
+        return last_trans
+
+    # get each of the last transactions per Bitcoin Address
+    def get_trans_per_user_dateRange(self, user, startDate, endDate):
+        addresses = self.get_addresses(user)
+
+        last_trans = [] 
+        for addr in addresses:
+            trans = self.get_trans_per_address_dateRange(addr, startDate, endDate)
+            last_trans.extend(trans)
             
         return last_trans
 

@@ -17,9 +17,9 @@ To log into this instance:
 
 To start and run the database (after logging in):
 1. conda activate coin
-2. Initialize database and empty tables:
+2. Initialize database and empty tables: <br>
 python setup_mysql_server.py
-3. Start Database Updater to run continuously in own window:
+3. Start Database Updater to run continuously in own window: <br>
 python db_updater.py
-4. Start user interact, note that main function runs demo for us, but we can change to be more user interactive:
+4. Start user interact, note that main function runs demo for us, but we can change to be more user interactive: <br>
 python user_interact.py

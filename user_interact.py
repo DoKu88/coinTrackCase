@@ -164,53 +164,108 @@ class UserInterface:
 
 def main():
 
+    # =========================================================================
+    # Make UI object and list the tables that we have
     UI = UserInterface()
     UI.list_table_names()
+    # =========================================================================
 
+    # =========================================================================
+    # Show Database before adding addressses
     print('Before adding addresses:')
     print('AddressBook')
     UI.show_table("AddressBook")
     print('-------------------')
+    # =========================================================================
 
+    # =========================================================================
+    # Add users and bitcoin addresses 
+    user1 = "Bobert"
     address = '3E8ociqZa9mZUSwGdSmAEMAoAxBK3FNDcd'
     address1 = 'bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5'
-              #'bc1q0sg9rdst255gtldsmcf8rk0764avqy2h2ksqs5'
-    user1 = "Bobert"
+
+    user2 = "Nancy"
+    address2 = '12xQ9k5ousS8MqNsMBqHKtjAtCuKezm2Ju'
 
     UI.add_user(address, user1)
     UI.add_address(address1, user1)
+
+    UI.add_address(address2, user2)
+
     print('AddressBook after adding addr and users')
     UI.show_table("AddressBook")
     print('-------------------')
+    import pdb; pdb.set_trace()
+    
+    print('Balances after adding addr and users')
+    UI.show_table("Balances")
+    print('-------------------')
+    import pdb; pdb.set_trace()
+    
+    print('Transactions after adding addr and users')
+    UI.show_table("Transactions")
+    print('-------------------')
+    import pdb; pdb.set_trace()
+    # =========================================================================
 
+    # =========================================================================
     # Get all Bitcoin Addresses for Bobert
     addresses = UI.get_user_addrs(user1)
     print(user1 + "'s Addresses: ", addresses)
+    import pdb; pdb.set_trace()
+    # =========================================================================
 
-    # Delete Bobert from DataBase and see what happens
-    #UI.del_user(user1)
-    #addresses = UI.get_user_addrs(user1)
-    #print("Bobert's Addresses: After del", addresses)
-
-    print("Balances table")
+    # =========================================================================
+    # Delete Bobert from DataBase and see that balances and transactions
+    # changed too
+    UI.del_user(user1)
+    addresses = UI.get_user_addrs(user1)
+    print("Bobert's Addresses: After del", addresses)
+    import pdb; pdb.set_trace()
+    
+    print("Balances table after Bobert Deleted")
     UI.show_table("Balances")
+    import pdb; pdb.set_trace()
+
+    print("Transactions table after Bobert Deleted")
+    UI.show_table("Transactions")
+    import pdb; pdb.set_trace()
+    # =========================================================================
+
+    # =========================================================================
+    # Add user1 bak into fold and get the balances
+    UI.add_address(address1, user1)
+    UI.add_address(address, user1)
 
     UI.get_balance_addr(address)
     UI.get_balance_user(user1)
+
     UI.get_transactions_addr(address)
     UI.get_transactions_user(user1)
+    import pdb; pdb.set_trace()
+    # =========================================================================
 
-
+    # =========================================================================
+    # Get ranged transactions 
+    
     #endDate = DateEncap(2022, 6, 27)
     #startDate = DateEncap(2022, 6, 20)
 
     endDate = DateEncap(2021, 10, 28)
     startDate = DateEncap(2021, 10, 20)
 
-    #UI.get_transactions_addr_range(address, startDate, endDate)
-    #UI.get_transactions_user_range(user1, startDate, endDate)
+    UI.get_transactions_addr_range(address, startDate, endDate)
+    import pdb; pdb.set_trace()
+
+    UI.get_transactions_user_range(user1, startDate, endDate)
+    import pdb; pdb.set_trace()
 
     UI.show_table("Balances")
+    import pdb; pdb.set_trace()
+    # =========================================================================
+
+    print('goodbye!')
+
 
 if __name__ == "__main__":
     main()

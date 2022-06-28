@@ -78,7 +78,7 @@ class DataBaseInterface:
         mycursor.execute(add_address)
         connection.commit()
 
-    def add_address_wrapper(self, address, user1):
+    def add_address_wrapper(self, address, user1, show=False):
         try:
             self.add_address(address, user1)
         except:
@@ -154,15 +154,19 @@ class DataBaseInterface:
         mycursor.execute(add_balance)
         connection.commit()
 
-    def add_balance_wrapper(self, address, balance_btc, balance_usd, datetime=None):
+    def add_balance_wrapper(self, address, balance_btc, balance_usd,
+            datetime=None, show=False):
         try:
             self.add_balance(address, balance_btc, balance_usd, datetime)
         except:
-            print("Balances couldn't be added to")
-            print("Address: ", address)
-            print("balance_btc: ", balance_btc)
-            print("balance_usd: ", balance_usd)
-            print("datetime: ", datetime)
+            if show:
+                print("Balances couldn't be added to")
+                print("Address: ", address)
+                print("balance_btc: ", balance_btc)
+                print("balance_usd: ", balance_usd)
+                print("datetime: ", datetime)
+            else:
+                pass
 
     # Need to get latest balance from balance table
     def get_balance_per_address(self, address):
@@ -293,13 +297,17 @@ class DataBaseInterface:
         if show:
             self.show_table('Transactions', mycursor)
 
-    def add_transaction_wrapper(self, address, transData, mycursor=None, show=True):
+    def add_transaction_wrapper(self, address, transData, mycursor=None,
+            show=False):
         try:
             self.add_transaction(address, transData, mycursor=None, show=show)
         except:
-            print("Transactions couldn't be added to")
-            print("Address: ", address)
-            print("transData: ", transData)
+            if show:
+                print("Transactions couldn't be added to")
+                print("Address: ", address)
+                print("transData: ", transData)
+            else:
+                pass
 
     # iterate through transactions
     def add_n_transactions(self, address, data_dict, n=None):

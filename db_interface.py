@@ -222,12 +222,57 @@ class DataBaseInterface:
             
         return balance_usd, balance_btc
 
+    # requirements state to grab the current transaction, interpret as the 
+    # last transaction that occurred
+    def get_balance_per_user_dateRange(self, user, startDate, endDate):
+        addresses = self.get_addresses(user)
+
+        balances = []
+        for addr in addresses:
+            balData = get_balance_per_address_dateRange(self, address, startDate, endDate)
+            balances.extend(balData)
+
+        return balances
+
+    # requirements state to grab the current transaction, interpret as the 
+    # last transaction that occurred
+    def get_balance_per_address_dateRange(self, address, startDate, endDate):
+        mycursor, connection = self.get_mysql_cursor()
+
+        '''
+        SELECT addr, balance_usd, balance_btc 
+        FROM Balances
+        WHERE addr = "address" AND time BETWEEN startDate AND endDate
+        '''
+
+        get_transaction = "SELECT addr, balance_usd, balance_btc, time "
+        get_transaction = get_transaction + "FROM Balances"
+        get_transaction = get_transaction + 'WHERE addr = "' + address + '" '
+        get_transaction = get_transaction + 'AND time BETWEEN "' + startDate + '" AND "' + endDate + '";'
+        
+        mycursor.execute(get_transaction)
+        bal_res = mycursor.fetchall()
+
+        balances = []
+    
+        for bal in bal_res:
+            #print(trans)
+
+            balData = dict()
+            balData['address'] = bal[0]
+            balData['balance_usd'] = bal[1]
+            balData['balance_btc'] = bal[2]
+            balData['time'] = bal[3]
+            balances.append(balData)
+        
+        return balances
+    
     # adds address and user to address book
     # Table: Transactions
     # Columns: addr VARCHAR(34), hash VARCHAR(64), time TIMESTAMP
     # DECIMAL
     def add_transaction(self, address, transData, mycursor=None, show=True):
-
+        
         connection = None
         if mycursor is None:
             mycursor, connection = self.get_mysql_cursor()
@@ -315,15 +360,6 @@ class DataBaseInterface:
         FROM Transactions 
         WHERE T1.addr = "address" AND time BETWEEN startDate AND endDate
         '''
-
-        #startDate1 = datetime(startDate['year'], startDate['month'],
-        #        startDate['day'], startDate['hour'], startDate['minute'],
-        #        startDate['second']).strftime('%Y-%m-%d %H:%M:%S')
-
-        #endDate1 = datetime(endDate['year'], endDate['month'],
-        #        endDate['day'], endDate['hour'], endDate['minute'],
-        #        endDate['second']).strftime('%Y-%m-%d %H:%M:%S')
-
 
         get_transaction = "SELECT addr, hash, time, balance_change, block_id "
         get_transaction = get_transaction + "FROM Transactions "

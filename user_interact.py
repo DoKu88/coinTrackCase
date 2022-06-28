@@ -59,6 +59,44 @@ class UserInterface:
         balance_usd, balance_btc = self.database.get_balance_per_user(user)
         return [balance_usd, balance_btc]
 
+    def get_balance_addr_range(self, addr, startDate, endDate):
+        startDate1 = startDate.get_formatted_date()
+        endDate1   = endDate.get_formatted_date()
+
+    # get all transactions for a bitcoin address within certain dates
+    def get_balance_addr_range(self, addr, startDate, endDate):
+
+        startDate1 = startDate.get_formatted_date()
+        endDate1   = endDate.get_formatted_date()
+
+        balances = self.database.get_balance_per_address_dateRange(addr,
+                startDate1, endDate1)
+
+        print('balances for address: ', addr, ' in range', startDate1, ' ',
+                endDate1)
+
+        for bals in balances:
+            print('balance : ')
+            print(bal)
+
+        return balances
+
+    def get_balance_user_range(self, user, startDate, endDate):
+        startDate1 = startDate.get_formatted_date()
+        endDate1   = endDate.get_formatted_date()
+
+        balances = self.database.get_balance_per_user_dateRange(user,
+                startDate1, endDate1)
+
+        print('balances for user: ', user, ' in range', startDate1, ' ',
+                endDate1)
+
+        for bals in balances:
+            print('balance : ')
+            print(bals)
+
+        return transactions
+
     def get_transactions_addr(self, addr):
         last_transaction = self.database.get_trans_per_address(addr)
 
@@ -166,8 +204,10 @@ def main():
     endDate = DateEncap(2021, 10, 28)
     startDate = DateEncap(2021, 10, 20)
 
-    UI.get_transactions_addr_range(address, startDate, endDate)
-    UI.get_transactions_user_range(user1, startDate, endDate)
+    #UI.get_transactions_addr_range(address, startDate, endDate)
+    #UI.get_transactions_user_range(user1, startDate, endDate)
+
+    UI.show_table("Balances")
 
 if __name__ == "__main__":
     main()
